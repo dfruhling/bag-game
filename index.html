@@ -1,0 +1,149 @@
+<html>
+    <head>
+        <title>The Bag Game!</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <style>
+            .coin-list {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .coin {
+                margin:20px;
+                list-style: none;
+                border-radius: 50%;
+                width: 70px;
+                height: 70px;
+                padding: 10px;
+
+                background: rgba(240, 175, 55, 0.774);
+                border: 2px solid #666;
+                color: black;
+
+                font-weight: bold;
+                text-align: center;
+                font: 25px Arial, sans-serif;
+            }
+
+            button {
+                background-color: #4CAF50; /* Green */
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+            }
+
+            .container {
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .top-section {
+                margin-top: 40px;
+                margin: auto;
+                width: 50%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="top-section">
+                <img src="./brown-bag.jpg" style="display: block; width:30%"/>
+
+                <br/><br/>
+
+                <button id="take-coin-button" onclick="takeCoin()">
+                    Take a coin
+                </button>
+
+                <button id="toggle-total" onclick="toggleTotal()">
+                    Toggle Total
+                </button>
+
+                <button id="reset-button" onclick="reset()">
+                    Reset
+                </button>
+            </div>
+
+            <div class="coin-section">
+                <h1 id="coin-total">
+                    Total: <span id="total">0</span>
+                </h1>
+                <ul id="coin-list" class="coin-list">
+                </ul>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        var queryParams = parseQueryParams();
+        console.log(queryParams);
+
+        showTotal =true;
+        if (queryParams.showTotal === false) {
+            toggleTotal();
+        }
+
+        function takeCoin() {
+            var max = queryParams.max;
+
+            var coinValue = Math.floor(Math.random() * (max + 1));
+
+            var ul = $("#coin-list");
+            var li = $("<li>" + String(coinValue.toLocaleString()) + "</li>")
+                .addClass("coin")
+                .appendTo(ul);     
+                
+            var totalElement = $("#total")
+
+            var currentVal = totalElement.text().replace(',','');
+            var newVal = parseInt(currentVal) + coinValue;
+
+            totalElement.text(newVal.toLocaleString());
+        }  
+        
+        function reset() {
+            var ul = $("#coin-list");
+            ul.empty();
+
+            var coinTotal = $("#total")
+            coinTotal.text(0);
+        }
+
+        function toggleTotal() {
+            showTotal ? $("#coin-total").hide() : $("#coin-total").show();
+            showTotal = !showTotal;
+        }
+
+        function parseQueryParams() {
+            var query = window.location.search.substring(1);
+            var params = getQueryParams(query);
+
+            return {
+                showTotal: 'showTotal' in params ? params.showTotal.toLowerCase() === 'true' : true,
+                max: 'max' in params ? parseInt(params.max) : 4,
+            }
+        }
+
+        function getQueryParams(qs) {
+            qs = qs.split('+').join(' ');
+
+            var params = {},
+                tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+            }
+
+            return params;
+        }
+        
+    </script>
+</html>
